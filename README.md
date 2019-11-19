@@ -30,3 +30,13 @@ Your network needs to be translated into a list of `Layer`. feed them into the `
 * `depth_scale`: scale all depth dimensions.
 * `log`: scale by log factor all dimensions.
 
+# Examples
+
+### Baseline Model
+![Baseline Model](https://github.com/thecosta/NetworkViewer/blob/master/examples/BaselineModel.png)
+
+### VGGNet
+![VGGNet](https://github.com/thecosta/NetworkViewer/blob/master/examples/VGGNet.png)
+
+### AlexNet
+![AlexNet](https://github.com/thecosta/NetworkViewer/blob/master/examples/AlexNet.png)
