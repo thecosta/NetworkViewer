@@ -88,6 +88,11 @@ class Plotter():
         # Get X-coordinates for layers
         for i, layer in enumerate(self.layers):
             layer.position = Tuple(current_x, 0)
+            #adjust = self.padding*(self.layers[i-1].depth-layer.depth)/(4*self.padding)
+            #if i and adjust > 0:
+            #    layer.position = Tuple(current_x+adjust, 0)
+            #    print('i: ', i, ', ', adjust)
+            #else:
             current_x += layer.output_dim.x + self.padding
             height = layer.output_dim.y + layer.depth
             if height > self.largest_y:
@@ -97,10 +102,13 @@ class Plotter():
         for layer in self.layers:
             layer.position.y = 0
             
-        self.window_height = self.largest_y+100+self.padding
-        print('Adjusting window height to recommended size: ', self.window_height)
-        self.window_width = total_layer_width + self.padding*(num_layers+2)
-        print('Adjusting window width to recommended size: ', self.window_width)
+        if self.window_height < self.largest_y+100+self.padding:
+            self.window_height = self.largest_y+100+self.padding
+            print('Adjusting window height to recommended size: ', self.window_height)
+            
+        if self.window_width < total_layer_width + self.padding*(num_layers+2):
+            self.window_width = total_layer_width + self.padding*(num_layers+2)
+            print('Adjusting window width to recommended size: ', self.window_width)
         
     def get_shapes(self):
         '''Draw layer shapes.'''
@@ -168,7 +176,7 @@ class Plotter():
                 if layer.output_dim_label:
                     upper_text = layer.output_dim_label
                 else:
-                    upper_text = '(?, '+str(layer.output_dim.y)+', '+str(layer.depth)+')'
+                    upper_text = '('+str(layer.output_dim.y)+', '+str(layer.depth)+')'
                     
                 x = layer.position.x + layer.output_dim.x/2 + layer.depth
                 y = layer.position.y + layer.output_dim.y + 10 + layer.depth
@@ -176,12 +184,13 @@ class Plotter():
                             rotation=45, fontsize=7)
             if self.show_lower_text:
                 lower_text = ''
+                #lower_text += layer.output_dim_label + '\n'
                 if layer.activation:
                     lower_text += layer.activation + '\n'
                 if layer.maxpool:
-                    lower_text += 'maxpool\n'
+                    lower_text += 'Maxpool\n'
                 if layer.flatten:
-                    lower_text += 'flatten\n'
+                    lower_text += 'Flatten\n'
                 start_x = layer.position.x+layer.output_dim.x/2
                 start_y = layer.position.y
                 end_x = layer.position.x+layer.output_dim.x/2 - 10
@@ -199,6 +208,10 @@ class Plotter():
         plt.title(self.title)        
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
+        input_patch = pat.Patch(color=(207.0/255, 242.0/255, 212.0/255), label='Input')
+        conv_patch = pat.Patch(color=(255.0/255, 242.0/255, 204.0/255), label='1D Convolution Layer')
+        fc_patch = pat.Patch(color=(242.0/255, 207.0/255, 207.0/255), label='Fully Connected Layer')
+        ax.legend(handles=[input_patch, conv_patch, fc_patch], ncol=3, loc='upper center')
         plt.show()
         
     
